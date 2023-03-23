@@ -126,7 +126,7 @@ namespace Microsoft.Extensions.DependencyInjection
             ThrowHelper.ThrowIfNull(services);
             ThrowHelper.ThrowIfNull(implementationFactory);
 
-            return services.AddTransient(typeof(TService), implementationFactory);
+            return services.AddTransient(serviceType: typeof(TService), implementationFactory: implementationFactory);
         }
 
         /// <summary>
@@ -150,7 +150,7 @@ namespace Microsoft.Extensions.DependencyInjection
             ThrowHelper.ThrowIfNull(services);
             ThrowHelper.ThrowIfNull(implementationFactory);
 
-            return services.AddTransient(typeof(TService), implementationFactory);
+            return services.AddTransient(serviceType: typeof(TService), implementationFactory: implementationFactory);
         }
 
         /// <summary>
@@ -268,7 +268,7 @@ namespace Microsoft.Extensions.DependencyInjection
             ThrowHelper.ThrowIfNull(services);
             ThrowHelper.ThrowIfNull(implementationFactory);
 
-            return services.AddScoped(typeof(TService), implementationFactory);
+            return services.AddScoped(serviceType: typeof(TService), implementationFactory: implementationFactory);
         }
 
         /// <summary>
@@ -292,7 +292,7 @@ namespace Microsoft.Extensions.DependencyInjection
             ThrowHelper.ThrowIfNull(services);
             ThrowHelper.ThrowIfNull(implementationFactory);
 
-            return services.AddScoped(typeof(TService), implementationFactory);
+            return services.AddScoped(serviceType: typeof(TService), implementationFactory: implementationFactory);
         }
 
 
@@ -411,7 +411,7 @@ namespace Microsoft.Extensions.DependencyInjection
             ThrowHelper.ThrowIfNull(services);
             ThrowHelper.ThrowIfNull(implementationFactory);
 
-            return services.AddSingleton(typeof(TService), implementationFactory);
+            return services.AddSingleton(serviceType: typeof(TService), implementationFactory: implementationFactory);
         }
 
         /// <summary>
@@ -435,7 +435,7 @@ namespace Microsoft.Extensions.DependencyInjection
             ThrowHelper.ThrowIfNull(services);
             ThrowHelper.ThrowIfNull(implementationFactory);
 
-            return services.AddSingleton(typeof(TService), implementationFactory);
+            return services.AddSingleton(serviceType: typeof(TService), implementationFactory: implementationFactory);
         }
 
         /// <summary>
@@ -479,7 +479,7 @@ namespace Microsoft.Extensions.DependencyInjection
             ThrowHelper.ThrowIfNull(services);
             ThrowHelper.ThrowIfNull(implementationInstance);
 
-            return services.AddSingleton(typeof(TService), implementationInstance);
+            return services.AddSingleton(serviceType: typeof(TService), implementationInstance: implementationInstance);
         }
 
         private static IServiceCollection Add(
