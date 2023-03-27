@@ -209,7 +209,7 @@ namespace Microsoft.Extensions.DependencyInjection
             where TService : class
             where TImplementation : class, TService
         {
-            return Describe<TService, TImplementation>(null, ServiceLifetime.Transient);
+            return DescribeKeyed<TService, TImplementation>(null, ServiceLifetime.Transient);
         }
 
         /// <summary>
@@ -221,11 +221,11 @@ namespace Microsoft.Extensions.DependencyInjection
         /// <typeparam name="TImplementation">The type of the implementation.</typeparam>
         /// <param name="serviceKey">The <see cref="ServiceDescriptor.ServiceKey"/> of the service.</param>
         /// <returns>A new instance of <see cref="ServiceDescriptor"/>.</returns>
-        public static ServiceDescriptor Transient<TService, [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] TImplementation>(object serviceKey)
+        public static ServiceDescriptor KeyedTransient<TService, [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] TImplementation>(object serviceKey)
             where TService : class
             where TImplementation : class, TService
         {
-            return Describe<TService, TImplementation>(serviceKey, ServiceLifetime.Transient);
+            return DescribeKeyed<TService, TImplementation>(serviceKey, ServiceLifetime.Transient);
         }
 
         /// <summary>
@@ -255,7 +255,7 @@ namespace Microsoft.Extensions.DependencyInjection
         /// <param name="serviceKey">The <see cref="ServiceDescriptor.ServiceKey"/> of the service.</param>
         /// <param name="implementationType">The type of the implementation.</param>
         /// <returns>A new instance of <see cref="ServiceDescriptor"/>.</returns>
-        public static ServiceDescriptor Transient(
+        public static ServiceDescriptor KeyedTransient(
             Type service,
             object serviceKey,
             [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] Type implementationType)
@@ -263,7 +263,7 @@ namespace Microsoft.Extensions.DependencyInjection
             ThrowHelper.ThrowIfNull(service);
             ThrowHelper.ThrowIfNull(implementationType);
 
-            return Describe(service, serviceKey, implementationType, ServiceLifetime.Transient);
+            return DescribeKeyed(service, serviceKey, implementationType, ServiceLifetime.Transient);
         }
 
         /// <summary>
@@ -297,7 +297,7 @@ namespace Microsoft.Extensions.DependencyInjection
         /// <param name="serviceKey">The <see cref="ServiceDescriptor.ServiceKey"/> of the service.</param>
         /// <param name="implementationFactory">A factory to create new instances of the service implementation.</param>
         /// <returns>A new instance of <see cref="ServiceDescriptor"/>.</returns>
-        public static ServiceDescriptor Transient<TService, TImplementation>(
+        public static ServiceDescriptor KeyedTransient<TService, TImplementation>(
             object serviceKey,
             Func<IServiceProvider, TImplementation> implementationFactory)
             where TService : class
@@ -305,7 +305,7 @@ namespace Microsoft.Extensions.DependencyInjection
         {
             ThrowHelper.ThrowIfNull(implementationFactory);
 
-            return Describe(typeof(TService), serviceKey, implementationFactory, ServiceLifetime.Transient);
+            return DescribeKeyed(typeof(TService), serviceKey, implementationFactory, ServiceLifetime.Transient);
         }
 
         /// <summary>
@@ -333,12 +333,12 @@ namespace Microsoft.Extensions.DependencyInjection
         /// <param name="serviceKey">The <see cref="ServiceDescriptor.ServiceKey"/> of the service.</param>
         /// <param name="implementationFactory">A factory to create new instances of the service implementation.</param>
         /// <returns>A new instance of <see cref="ServiceDescriptor"/>.</returns>
-        public static ServiceDescriptor Transient<TService>(object serviceKey, Func<IServiceProvider, TService> implementationFactory)
+        public static ServiceDescriptor KeyedTransient<TService>(object serviceKey, Func<IServiceProvider, TService> implementationFactory)
             where TService : class
         {
             ThrowHelper.ThrowIfNull(implementationFactory);
 
-            return Describe(typeof(TService), serviceKey, implementationFactory, ServiceLifetime.Transient);
+            return DescribeKeyed(typeof(TService), serviceKey, implementationFactory, ServiceLifetime.Transient);
         }
 
         /// <summary>
@@ -366,12 +366,12 @@ namespace Microsoft.Extensions.DependencyInjection
         /// <param name="serviceKey">The <see cref="ServiceDescriptor.ServiceKey"/> of the service.</param>
         /// <param name="implementationFactory">A factory to create new instances of the service implementation.</param>
         /// <returns>A new instance of <see cref="ServiceDescriptor"/>.</returns>
-        public static ServiceDescriptor Transient(Type service, object serviceKey, Func<IServiceProvider, object> implementationFactory)
+        public static ServiceDescriptor KeyedTransient(Type service, object serviceKey, Func<IServiceProvider, object> implementationFactory)
         {
             ThrowHelper.ThrowIfNull(service);
             ThrowHelper.ThrowIfNull(implementationFactory);
 
-            return Describe(service, serviceKey, implementationFactory, ServiceLifetime.Transient);
+            return DescribeKeyed(service, serviceKey, implementationFactory, ServiceLifetime.Transient);
         }
 
         /// <summary>
@@ -386,7 +386,7 @@ namespace Microsoft.Extensions.DependencyInjection
             where TService : class
             where TImplementation : class, TService
         {
-            return Describe<TService, TImplementation>(null, ServiceLifetime.Scoped);
+            return DescribeKeyed<TService, TImplementation>(null, ServiceLifetime.Scoped);
         }
 
         /// <summary>
@@ -398,11 +398,11 @@ namespace Microsoft.Extensions.DependencyInjection
         /// <typeparam name="TImplementation">The type of the implementation.</typeparam>
         /// <param name="serviceKey">The <see cref="ServiceDescriptor.ServiceKey"/> of the service.</param>
         /// <returns>A new instance of <see cref="ServiceDescriptor"/>.</returns>
-        public static ServiceDescriptor Scoped<TService, [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] TImplementation>(object serviceKey)
+        public static ServiceDescriptor KeyedScoped<TService, [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] TImplementation>(object serviceKey)
             where TService : class
             where TImplementation : class, TService
         {
-            return Describe<TService, TImplementation>(serviceKey, ServiceLifetime.Scoped);
+            return DescribeKeyed<TService, TImplementation>(serviceKey, ServiceLifetime.Scoped);
         }
 
         /// <summary>
@@ -429,12 +429,12 @@ namespace Microsoft.Extensions.DependencyInjection
         /// <param name="serviceKey">The <see cref="ServiceDescriptor.ServiceKey"/> of the service.</param>
         /// <param name="implementationType">The type of the implementation.</param>
         /// <returns>A new instance of <see cref="ServiceDescriptor"/>.</returns>
-        public static ServiceDescriptor Scoped(
+        public static ServiceDescriptor KeyedScoped(
             Type service,
             object serviceKey,
             [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] Type implementationType)
         {
-            return Describe(service, serviceKey, implementationType, ServiceLifetime.Scoped);
+            return DescribeKeyed(service, serviceKey, implementationType, ServiceLifetime.Scoped);
         }
 
         /// <summary>
@@ -468,7 +468,7 @@ namespace Microsoft.Extensions.DependencyInjection
         /// <param name="serviceKey">The <see cref="ServiceDescriptor.ServiceKey"/> of the service.</param>
         /// <param name="implementationFactory">A factory to create new instances of the service implementation.</param>
         /// <returns>A new instance of <see cref="ServiceDescriptor"/>.</returns>
-        public static ServiceDescriptor Scoped<TService, TImplementation>(
+        public static ServiceDescriptor KeyedScoped<TService, TImplementation>(
             object serviceKey,
             Func<IServiceProvider, TImplementation> implementationFactory)
             where TService : class
@@ -476,7 +476,7 @@ namespace Microsoft.Extensions.DependencyInjection
         {
             ThrowHelper.ThrowIfNull(implementationFactory);
 
-            return Describe(typeof(TService), serviceKey, implementationFactory, ServiceLifetime.Scoped);
+            return DescribeKeyed(typeof(TService), serviceKey, implementationFactory, ServiceLifetime.Scoped);
         }
 
         /// <summary>
@@ -504,12 +504,12 @@ namespace Microsoft.Extensions.DependencyInjection
         /// <param name="serviceKey">The <see cref="ServiceDescriptor.ServiceKey"/> of the service.</param>
         /// <param name="implementationFactory">A factory to create new instances of the service implementation.</param>
         /// <returns>A new instance of <see cref="ServiceDescriptor"/>.</returns>
-        public static ServiceDescriptor Scoped<TService>(object serviceKey, Func<IServiceProvider, TService> implementationFactory)
+        public static ServiceDescriptor KeyedScoped<TService>(object serviceKey, Func<IServiceProvider, TService> implementationFactory)
             where TService : class
         {
             ThrowHelper.ThrowIfNull(implementationFactory);
 
-            return Describe(typeof(TService), serviceKey, implementationFactory, ServiceLifetime.Scoped);
+            return DescribeKeyed(typeof(TService), serviceKey, implementationFactory, ServiceLifetime.Scoped);
         }
 
         /// <summary>
@@ -537,12 +537,12 @@ namespace Microsoft.Extensions.DependencyInjection
         /// <param name="serviceKey">The <see cref="ServiceDescriptor.ServiceKey"/> of the service.</param>
         /// <param name="implementationFactory">A factory to create new instances of the service implementation.</param>
         /// <returns>A new instance of <see cref="ServiceDescriptor"/>.</returns>
-        public static ServiceDescriptor Scoped(Type service, object serviceKey, Func<IServiceProvider, object> implementationFactory)
+        public static ServiceDescriptor KeyedScoped(Type service, object serviceKey, Func<IServiceProvider, object> implementationFactory)
         {
             ThrowHelper.ThrowIfNull(service);
             ThrowHelper.ThrowIfNull(implementationFactory);
 
-            return Describe(service, serviceKey, implementationFactory, ServiceLifetime.Scoped);
+            return DescribeKeyed(service, serviceKey, implementationFactory, ServiceLifetime.Scoped);
         }
 
         /// <summary>
@@ -557,7 +557,7 @@ namespace Microsoft.Extensions.DependencyInjection
             where TService : class
             where TImplementation : class, TService
         {
-            return Describe<TService, TImplementation>(null, ServiceLifetime.Singleton);
+            return DescribeKeyed<TService, TImplementation>(null, ServiceLifetime.Singleton);
         }
 
         /// <summary>
@@ -574,7 +574,7 @@ namespace Microsoft.Extensions.DependencyInjection
             where TService : class
             where TImplementation : class, TService
         {
-            return Describe<TService, TImplementation>(serviceKey, ServiceLifetime.Singleton);
+            return DescribeKeyed<TService, TImplementation>(serviceKey, ServiceLifetime.Singleton);
         }
 
         /// <summary>
@@ -604,7 +604,7 @@ namespace Microsoft.Extensions.DependencyInjection
         /// <param name="serviceKey">The <see cref="ServiceDescriptor.ServiceKey"/> of the service.</param>
         /// <param name="implementationType">The type of the implementation.</param>
         /// <returns>A new instance of <see cref="ServiceDescriptor"/>.</returns>
-        public static ServiceDescriptor Singleton(
+        public static ServiceDescriptor KeyedSingleton(
             Type service,
             object serviceKey,
             [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] Type implementationType)
@@ -612,7 +612,7 @@ namespace Microsoft.Extensions.DependencyInjection
             ThrowHelper.ThrowIfNull(service);
             ThrowHelper.ThrowIfNull(implementationType);
 
-            return Describe(service, serviceKey, implementationType, ServiceLifetime.Singleton);
+            return DescribeKeyed(service, serviceKey, implementationType, ServiceLifetime.Singleton);
         }
 
         /// <summary>
@@ -646,7 +646,7 @@ namespace Microsoft.Extensions.DependencyInjection
         /// <param name="serviceKey">The <see cref="ServiceDescriptor.ServiceKey"/> of the service.</param>
         /// <param name="implementationFactory">A factory to create new instances of the service implementation.</param>
         /// <returns>A new instance of <see cref="ServiceDescriptor"/>.</returns>
-        public static ServiceDescriptor Singleton<TService, TImplementation>(
+        public static ServiceDescriptor KeyedSingleton<TService, TImplementation>(
             object serviceKey,
             Func<IServiceProvider, TImplementation> implementationFactory)
             where TService : class
@@ -654,7 +654,7 @@ namespace Microsoft.Extensions.DependencyInjection
         {
             ThrowHelper.ThrowIfNull(implementationFactory);
 
-            return Describe(typeof(TService), serviceKey, implementationFactory, ServiceLifetime.Singleton);
+            return DescribeKeyed(typeof(TService), serviceKey, implementationFactory, ServiceLifetime.Singleton);
         }
 
         /// <summary>
@@ -682,14 +682,14 @@ namespace Microsoft.Extensions.DependencyInjection
         /// <param name="serviceKey">The <see cref="ServiceDescriptor.ServiceKey"/> of the service.</param>
         /// <param name="implementationFactory">A factory to create new instances of the service implementation.</param>
         /// <returns>A new instance of <see cref="ServiceDescriptor"/>.</returns>
-        public static ServiceDescriptor Singleton<TService>(
+        public static ServiceDescriptor KeyedSingleton<TService>(
             object serviceKey,
             Func<IServiceProvider, TService> implementationFactory)
             where TService : class
         {
             ThrowHelper.ThrowIfNull(implementationFactory);
 
-            return Describe(typeof(TService), serviceKey, implementationFactory, ServiceLifetime.Singleton);
+            return DescribeKeyed(typeof(TService), serviceKey, implementationFactory, ServiceLifetime.Singleton);
         }
 
         /// <summary>
@@ -719,7 +719,7 @@ namespace Microsoft.Extensions.DependencyInjection
         /// <param name="serviceKey">The <see cref="ServiceDescriptor.ServiceKey"/> of the service.</param>
         /// <param name="implementationFactory">A factory to create new instances of the service implementation.</param>
         /// <returns>A new instance of <see cref="ServiceDescriptor"/>.</returns>
-        public static ServiceDescriptor Singleton(
+        public static ServiceDescriptor KeyedSingleton(
             Type serviceType,
             object serviceKey,
             Func<IServiceProvider, object> implementationFactory)
@@ -727,7 +727,7 @@ namespace Microsoft.Extensions.DependencyInjection
             ThrowHelper.ThrowIfNull(serviceType);
             ThrowHelper.ThrowIfNull(implementationFactory);
 
-            return Describe(serviceType, serviceKey, implementationFactory, ServiceLifetime.Singleton);
+            return DescribeKeyed(serviceType, serviceKey, implementationFactory, ServiceLifetime.Singleton);
         }
 
         /// <summary>
@@ -755,14 +755,14 @@ namespace Microsoft.Extensions.DependencyInjection
         /// <param name="serviceKey">The <see cref="ServiceDescriptor.ServiceKey"/> of the service.</param>
         /// <param name="implementationInstance">The instance of the implementation.</param>
         /// <returns>A new instance of <see cref="ServiceDescriptor"/>.</returns>
-        public static ServiceDescriptor Singleton<TService>(
+        public static ServiceDescriptor KeyedSingleton<TService>(
             object serviceKey,
             TService implementationInstance)
             where TService : class
         {
             ThrowHelper.ThrowIfNull(implementationInstance);
 
-            return Singleton(typeof(TService), serviceKey, implementationInstance);
+            return KeyedSingleton(typeof(TService), serviceKey, implementationInstance);
         }
 
         /// <summary>
@@ -792,7 +792,7 @@ namespace Microsoft.Extensions.DependencyInjection
         /// <param name="serviceKey">The <see cref="ServiceDescriptor.ServiceKey"/> of the service.</param>
         /// <param name="implementationInstance">The instance of the implementation.</param>
         /// <returns>A new instance of <see cref="ServiceDescriptor"/>.</returns>
-        public static ServiceDescriptor Singleton(
+        public static ServiceDescriptor KeyedSingleton(
             Type serviceType,
             object serviceKey,
             object implementationInstance)
@@ -803,13 +803,13 @@ namespace Microsoft.Extensions.DependencyInjection
             return new ServiceDescriptor(serviceType, serviceKey, implementationInstance);
         }
 
-        private static ServiceDescriptor Describe<TService, [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] TImplementation>(
+        private static ServiceDescriptor DescribeKeyed<TService, [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] TImplementation>(
             object? serviceKey,
             ServiceLifetime lifetime)
             where TService : class
             where TImplementation : class, TService
         {
-            return Describe(
+            return DescribeKeyed(
                 typeof(TService),
                 serviceKey,
                 typeof(TImplementation),
@@ -843,7 +843,7 @@ namespace Microsoft.Extensions.DependencyInjection
         /// <param name="implementationType">The type of the implementation.</param>
         /// <param name="lifetime">The lifetime of the service.</param>
         /// <returns>A new instance of <see cref="ServiceDescriptor"/>.</returns>
-        public static ServiceDescriptor Describe(
+        public static ServiceDescriptor DescribeKeyed(
             Type serviceType,
             object? serviceKey,
             [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] Type implementationType,
@@ -876,7 +876,7 @@ namespace Microsoft.Extensions.DependencyInjection
         /// <param name="implementationFactory">A factory to create new instances of the service implementation.</param>
         /// <param name="lifetime">The lifetime of the service.</param>
         /// <returns>A new instance of <see cref="ServiceDescriptor"/>.</returns>
-        public static ServiceDescriptor Describe(Type serviceType, object serviceKey, Func<IServiceProvider, object> implementationFactory, ServiceLifetime lifetime)
+        public static ServiceDescriptor DescribeKeyed(Type serviceType, object serviceKey, Func<IServiceProvider, object> implementationFactory, ServiceLifetime lifetime)
         {
             return new ServiceDescriptor(serviceType, serviceKey, implementationFactory, lifetime);
         }

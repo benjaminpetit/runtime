@@ -19,6 +19,6 @@ namespace Microsoft.Extensions.DependencyInjection
         /// <param name="serviceKey">The <see cref="ServiceDescriptor.ServiceKey"/> of the service.</param>
         /// <returns>A service object of type <paramref name="serviceType"/>.
         /// Throws an exception if the <see cref="IServiceProvider"/> cannot create the object.</returns>
-        object GetRequiredService(Type serviceType, object serviceKey);
+        object GetRequiredKeyedService(Type serviceType, object serviceKey);
     }
 }
