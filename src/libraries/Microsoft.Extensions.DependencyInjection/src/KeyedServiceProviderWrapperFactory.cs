@@ -61,7 +61,7 @@ namespace Microsoft.Extensions.DependencyInjection
                     else
                     {
                         // TODO BPETIT
-                        throw new ArgumentException("Service descriptor incompatible");
+                        throw new ArgumentException("Incompatible service descriptor");
                     }
                     // TODO BPETIT transient? scoped?
                     var wrappedDescriptor = new ServiceDescriptor(wrappedType, sp => keyedService, descriptor.Lifetime);
@@ -85,12 +85,12 @@ namespace Microsoft.Extensions.DependencyInjection
 
         [UnconditionalSuppressMessage("ReflectionAnalysis", "IL2055:MakeGenericType", Justification = "TODO BPETIT")]
         [UnconditionalSuppressMessage("AotAnalysis", "IL3050:RequiresDynamicCode", Justification = "TODO BPETIT")]
-        public object GetService(Type serviceType, object serviceKey)
+        public object GetKeyedService(Type serviceType, object serviceKey)
         {
             var wrappedType = typeof(KeyedService<>).MakeGenericType(serviceType);
             //var services = _serviceProvider.GetServices(wrappedType);
-            IEnumerable<IKeyedService> services = new List<IKeyedService>(); // TODO BPETIT
-            var entry = services.FirstOrDefault(s => ((IKeyedService) s).ServiceKey == serviceKey);
+            IEnumerable<object?> services = _serviceProvider.GetServices(wrappedType);
+            var entry = services.FirstOrDefault(s => s != null && ((IKeyedService) s).ServiceKey == serviceKey);
             if (entry == null)
             {
                 throw new ArgumentException("TODO BPETIT");

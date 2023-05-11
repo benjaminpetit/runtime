@@ -25,7 +25,7 @@ namespace Microsoft.Extensions.DependencyInjection
 
             if (provider is ISupportKeyedService keyedServiceProvider)
             {
-                return (T?)keyedServiceProvider.GetService(typeof(T), serviceKey);
+                return (T?)keyedServiceProvider.GetKeyedService(typeof(T), serviceKey);
             }
 
             throw new InvalidOperationException("TODO BPETIT");
@@ -51,7 +51,7 @@ namespace Microsoft.Extensions.DependencyInjection
 
             if (provider is ISupportKeyedService keyedServiceProvider)
             {
-                object? service = keyedServiceProvider.GetService(serviceType, serviceKey);
+                object? service = keyedServiceProvider.GetKeyedService(serviceType, serviceKey);
                 if (service == null)
                 {
                     throw new InvalidOperationException(SR.Format(SR.NoServiceRegistered, serviceType));

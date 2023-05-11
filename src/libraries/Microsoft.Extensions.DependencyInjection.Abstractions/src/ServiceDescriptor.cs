@@ -105,7 +105,7 @@ namespace Microsoft.Extensions.DependencyInjection
             object? serviceKey,
             Func<IServiceProvider, object> factory,
             ServiceLifetime lifetime)
-            : this(serviceType, lifetime)
+            : this(serviceType, serviceKey, lifetime)
         {
             ThrowHelper.ThrowIfNull(serviceType);
             ThrowHelper.ThrowIfNull(factory);
