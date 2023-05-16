@@ -80,6 +80,11 @@ namespace Microsoft.Extensions.DependencyInjection.ServiceLookup
                             SR.Format(SR.TypeCannotBeActivated, implementationType, serviceType));
                     }
                 }
+                if (descriptor.ServiceKey is not null)
+                {
+                    // TODO
+                    throw new ArgumentException("Not supported");
+                }
 
                 Type cacheKey = serviceType;
                 _descriptorLookup.TryGetValue(cacheKey, out ServiceDescriptorCacheItem cacheItem);

@@ -9,7 +9,7 @@ namespace Microsoft.Extensions.DependencyInjection
     /// <summary>
     /// Extension methods for adding services to an <see cref="IServiceCollection" />.
     /// </summary>
-    public static class ServiceCollectionServiceExtensions
+    public static class ServiceCollectionKeyedServiceExtensions
     {
         /// <summary>
         /// Adds a transient service of the type specified in <paramref name="serviceType"/> with an
@@ -18,19 +18,21 @@ namespace Microsoft.Extensions.DependencyInjection
         /// </summary>
         /// <param name="services">The <see cref="IServiceCollection"/> to add the service to.</param>
         /// <param name="serviceType">The type of the service to register.</param>
+        /// <param name="serviceKey">The <see cref="ServiceDescriptor.ServiceKey"/> of the service.</param>
         /// <param name="implementationType">The implementation type of the service.</param>
         /// <returns>A reference to this instance after the operation has completed.</returns>
         /// <seealso cref="ServiceLifetime.Transient"/>
-        public static IServiceCollection AddTransient(
+        public static IServiceCollection AddKeyedTransient(
             this IServiceCollection services,
             Type serviceType,
+            object serviceKey,
             [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] Type implementationType)
         {
             ThrowHelper.ThrowIfNull(services);
             ThrowHelper.ThrowIfNull(serviceType);
             ThrowHelper.ThrowIfNull(implementationType);
 
-            return Add(services, serviceType, implementationType, ServiceLifetime.Transient);
+            return AddKeyed(services, serviceType, serviceKey, implementationType, ServiceLifetime.Transient);
         }
 
         /// <summary>
@@ -40,19 +42,21 @@ namespace Microsoft.Extensions.DependencyInjection
         /// </summary>
         /// <param name="services">The <see cref="IServiceCollection"/> to add the service to.</param>
         /// <param name="serviceType">The type of the service to register.</param>
+        /// <param name="serviceKey">The <see cref="ServiceDescriptor.ServiceKey"/> of the service.</param>
         /// <param name="implementationFactory">The factory that creates the service.</param>
         /// <returns>A reference to this instance after the operation has completed.</returns>
         /// <seealso cref="ServiceLifetime.Transient"/>
-        public static IServiceCollection AddTransient(
+        public static IServiceCollection AddKeyedTransient(
             this IServiceCollection services,
             Type serviceType,
+            object serviceKey,
             Func<IServiceProvider, object> implementationFactory)
         {
             ThrowHelper.ThrowIfNull(services);
             ThrowHelper.ThrowIfNull(serviceType);
             ThrowHelper.ThrowIfNull(implementationFactory);
 
-            return Add(services, serviceType, implementationFactory, ServiceLifetime.Transient);
+            return AddKeyed(services, serviceType, serviceKey, implementationFactory, ServiceLifetime.Transient);
         }
 
         /// <summary>
@@ -63,15 +67,18 @@ namespace Microsoft.Extensions.DependencyInjection
         /// <typeparam name="TService">The type of the service to add.</typeparam>
         /// <typeparam name="TImplementation">The type of the implementation to use.</typeparam>
         /// <param name="services">The <see cref="IServiceCollection"/> to add the service to.</param>
+        /// <param name="serviceKey">The <see cref="ServiceDescriptor.ServiceKey"/> of the service.</param>
         /// <returns>A reference to this instance after the operation has completed.</returns>
         /// <seealso cref="ServiceLifetime.Transient"/>
-        public static IServiceCollection AddTransient<TService, [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] TImplementation>(this IServiceCollection services)
+        public static IServiceCollection AddKeyedTransient<TService, [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] TImplementation>(
+            this IServiceCollection services,
+            object serviceKey)
             where TService : class
             where TImplementation : class, TService
         {
             ThrowHelper.ThrowIfNull(services);
 
-            return services.AddTransient(typeof(TService), typeof(TImplementation));
+            return services.AddKeyedTransient(typeof(TService), serviceKey, typeof(TImplementation));
         }
 
         /// <summary>
@@ -80,16 +87,18 @@ namespace Microsoft.Extensions.DependencyInjection
         /// </summary>
         /// <param name="services">The <see cref="IServiceCollection"/> to add the service to.</param>
         /// <param name="serviceType">The type of the service to register and the implementation to use.</param>
+        /// <param name="serviceKey">The <see cref="ServiceDescriptor.ServiceKey"/> of the service.</param>
         /// <returns>A reference to this instance after the operation has completed.</returns>
         /// <seealso cref="ServiceLifetime.Transient"/>
-        public static IServiceCollection AddTransient(
+        public static IServiceCollection AddKeyedTransient(
             this IServiceCollection services,
-            [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] Type serviceType)
+            [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] Type serviceType,
+            object serviceKey)
         {
             ThrowHelper.ThrowIfNull(services);
             ThrowHelper.ThrowIfNull(serviceType);
 
-            return services.AddTransient(serviceType, serviceType);
+            return services.AddKeyedTransient(serviceType, serviceKey, serviceType);
         }
 
         /// <summary>
@@ -98,14 +107,17 @@ namespace Microsoft.Extensions.DependencyInjection
         /// </summary>
         /// <typeparam name="TService">The type of the service to add.</typeparam>
         /// <param name="services">The <see cref="IServiceCollection"/> to add the service to.</param>
+        /// <param name="serviceKey">The <see cref="ServiceDescriptor.ServiceKey"/> of the service.</param>
         /// <returns>A reference to this instance after the operation has completed.</returns>
         /// <seealso cref="ServiceLifetime.Transient"/>
-        public static IServiceCollection AddTransient<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] TService>(this IServiceCollection services)
+        public static IServiceCollection AddKeyedTransient<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] TService>(
+            this IServiceCollection services,
+            object serviceKey)
             where TService : class
         {
             ThrowHelper.ThrowIfNull(services);
 
-            return services.AddTransient(typeof(TService));
+            return services.AddKeyedTransient(typeof(TService), serviceKey);
         }
 
         /// <summary>
@@ -115,18 +127,20 @@ namespace Microsoft.Extensions.DependencyInjection
         /// </summary>
         /// <typeparam name="TService">The type of the service to add.</typeparam>
         /// <param name="services">The <see cref="IServiceCollection"/> to add the service to.</param>
+        /// <param name="serviceKey">The <see cref="ServiceDescriptor.ServiceKey"/> of the service.</param>
         /// <param name="implementationFactory">The factory that creates the service.</param>
         /// <returns>A reference to this instance after the operation has completed.</returns>
         /// <seealso cref="ServiceLifetime.Transient"/>
-        public static IServiceCollection AddTransient<TService>(
+        public static IServiceCollection AddKeyedTransient<TService>(
             this IServiceCollection services,
+            object serviceKey,
             Func<IServiceProvider, TService> implementationFactory)
             where TService : class
         {
             ThrowHelper.ThrowIfNull(services);
             ThrowHelper.ThrowIfNull(implementationFactory);
 
-            return services.AddTransient(serviceType: typeof(TService), implementationFactory: implementationFactory);
+            return services.AddKeyedTransient(typeof(TService), serviceKey, implementationFactory);
         }
 
         /// <summary>
@@ -138,11 +152,13 @@ namespace Microsoft.Extensions.DependencyInjection
         /// <typeparam name="TService">The type of the service to add.</typeparam>
         /// <typeparam name="TImplementation">The type of the implementation to use.</typeparam>
         /// <param name="services">The <see cref="IServiceCollection"/> to add the service to.</param>
+        /// <param name="serviceKey">The <see cref="ServiceDescriptor.ServiceKey"/> of the service.</param>
         /// <param name="implementationFactory">The factory that creates the service.</param>
         /// <returns>A reference to this instance after the operation has completed.</returns>
         /// <seealso cref="ServiceLifetime.Transient"/>
-        public static IServiceCollection AddTransient<TService, TImplementation>(
+        public static IServiceCollection AddKeyedTransient<TService, TImplementation>(
             this IServiceCollection services,
+            object serviceKey,
             Func<IServiceProvider, TImplementation> implementationFactory)
             where TService : class
             where TImplementation : class, TService
@@ -150,7 +166,7 @@ namespace Microsoft.Extensions.DependencyInjection
             ThrowHelper.ThrowIfNull(services);
             ThrowHelper.ThrowIfNull(implementationFactory);
 
-            return services.AddTransient(serviceType: typeof(TService), implementationFactory: implementationFactory);
+            return services.AddKeyedTransient(typeof(TService), serviceKey, implementationFactory);
         }
 
         /// <summary>
@@ -160,19 +176,21 @@ namespace Microsoft.Extensions.DependencyInjection
         /// </summary>
         /// <param name="services">The <see cref="IServiceCollection"/> to add the service to.</param>
         /// <param name="serviceType">The type of the service to register.</param>
+        /// <param name="serviceKey">The <see cref="ServiceDescriptor.ServiceKey"/> of the service.</param>
         /// <param name="implementationType">The implementation type of the service.</param>
         /// <returns>A reference to this instance after the operation has completed.</returns>
         /// <seealso cref="ServiceLifetime.Scoped"/>
-        public static IServiceCollection AddScoped(
+        public static IServiceCollection AddKeyedScoped(
             this IServiceCollection services,
             Type serviceType,
+            object serviceKey,
             [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] Type implementationType)
         {
             ThrowHelper.ThrowIfNull(services);
             ThrowHelper.ThrowIfNull(serviceType);
             ThrowHelper.ThrowIfNull(implementationType);
 
-            return Add(services, serviceType, implementationType, ServiceLifetime.Scoped);
+            return AddKeyed(services, serviceType, serviceKey, implementationType, ServiceLifetime.Scoped);
         }
 
         /// <summary>
@@ -182,19 +200,21 @@ namespace Microsoft.Extensions.DependencyInjection
         /// </summary>
         /// <param name="services">The <see cref="IServiceCollection"/> to add the service to.</param>
         /// <param name="serviceType">The type of the service to register.</param>
+        /// <param name="serviceKey">The <see cref="ServiceDescriptor.ServiceKey"/> of the service.</param>
         /// <param name="implementationFactory">The factory that creates the service.</param>
         /// <returns>A reference to this instance after the operation has completed.</returns>
         /// <seealso cref="ServiceLifetime.Scoped"/>
-        public static IServiceCollection AddScoped(
+        public static IServiceCollection AddKeyedScoped(
             this IServiceCollection services,
             Type serviceType,
+            object serviceKey,
             Func<IServiceProvider, object> implementationFactory)
         {
             ThrowHelper.ThrowIfNull(services);
             ThrowHelper.ThrowIfNull(serviceType);
             ThrowHelper.ThrowIfNull(implementationFactory);
 
-            return Add(services, serviceType, implementationFactory, ServiceLifetime.Scoped);
+            return AddKeyed(services, serviceType, serviceKey, implementationFactory, ServiceLifetime.Scoped);
         }
 
         /// <summary>
@@ -205,15 +225,18 @@ namespace Microsoft.Extensions.DependencyInjection
         /// <typeparam name="TService">The type of the service to add.</typeparam>
         /// <typeparam name="TImplementation">The type of the implementation to use.</typeparam>
         /// <param name="services">The <see cref="IServiceCollection"/> to add the service to.</param>
+        /// <param name="serviceKey">The <see cref="ServiceDescriptor.ServiceKey"/> of the service.</param>
         /// <returns>A reference to this instance after the operation has completed.</returns>
         /// <seealso cref="ServiceLifetime.Scoped"/>
-        public static IServiceCollection AddScoped<TService, [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] TImplementation>(this IServiceCollection services)
+        public static IServiceCollection AddKeyedScoped<TService, [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] TImplementation>(
+            this IServiceCollection services,
+            object serviceKey)
             where TService : class
             where TImplementation : class, TService
         {
             ThrowHelper.ThrowIfNull(services);
 
-            return services.AddScoped(typeof(TService), typeof(TImplementation));
+            return services.AddKeyedScoped(typeof(TService), serviceKey, typeof(TImplementation));
         }
 
         /// <summary>
@@ -222,16 +245,18 @@ namespace Microsoft.Extensions.DependencyInjection
         /// </summary>
         /// <param name="services">The <see cref="IServiceCollection"/> to add the service to.</param>
         /// <param name="serviceType">The type of the service to register and the implementation to use.</param>
+        /// <param name="serviceKey">The <see cref="ServiceDescriptor.ServiceKey"/> of the service.</param>
         /// <returns>A reference to this instance after the operation has completed.</returns>
         /// <seealso cref="ServiceLifetime.Scoped"/>
-        public static IServiceCollection AddScoped(
+        public static IServiceCollection AddKeyedScoped(
             this IServiceCollection services,
-            [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] Type serviceType)
+            [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] Type serviceType,
+            object serviceKey)
         {
             ThrowHelper.ThrowIfNull(services);
             ThrowHelper.ThrowIfNull(serviceType);
 
-            return services.AddScoped(serviceType, serviceType);
+            return services.AddKeyedScoped(serviceType, serviceKey, serviceType);
         }
 
         /// <summary>
@@ -240,14 +265,17 @@ namespace Microsoft.Extensions.DependencyInjection
         /// </summary>
         /// <typeparam name="TService">The type of the service to add.</typeparam>
         /// <param name="services">The <see cref="IServiceCollection"/> to add the service to.</param>
+        /// <param name="serviceKey">The <see cref="ServiceDescriptor.ServiceKey"/> of the service.</param>
         /// <returns>A reference to this instance after the operation has completed.</returns>
         /// <seealso cref="ServiceLifetime.Scoped"/>
-        public static IServiceCollection AddScoped<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] TService>(this IServiceCollection services)
+        public static IServiceCollection AddKeyedScoped<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] TService>(
+            this IServiceCollection services,
+            object serviceKey)
             where TService : class
         {
             ThrowHelper.ThrowIfNull(services);
 
-            return services.AddScoped(typeof(TService));
+            return services.AddKeyedScoped(typeof(TService), serviceKey);
         }
 
         /// <summary>
@@ -257,18 +285,20 @@ namespace Microsoft.Extensions.DependencyInjection
         /// </summary>
         /// <typeparam name="TService">The type of the service to add.</typeparam>
         /// <param name="services">The <see cref="IServiceCollection"/> to add the service to.</param>
+        /// <param name="serviceKey">The <see cref="ServiceDescriptor.ServiceKey"/> of the service.</param>
         /// <param name="implementationFactory">The factory that creates the service.</param>
         /// <returns>A reference to this instance after the operation has completed.</returns>
         /// <seealso cref="ServiceLifetime.Scoped"/>
-        public static IServiceCollection AddScoped<TService>(
+        public static IServiceCollection AddKeyedScoped<TService>(
             this IServiceCollection services,
+            object serviceKey,
             Func<IServiceProvider, TService> implementationFactory)
             where TService : class
         {
             ThrowHelper.ThrowIfNull(services);
             ThrowHelper.ThrowIfNull(implementationFactory);
 
-            return services.AddScoped(serviceType: typeof(TService), implementationFactory: implementationFactory);
+            return services.AddKeyedScoped(typeof(TService), serviceKey, implementationFactory);
         }
 
         /// <summary>
@@ -280,11 +310,13 @@ namespace Microsoft.Extensions.DependencyInjection
         /// <typeparam name="TService">The type of the service to add.</typeparam>
         /// <typeparam name="TImplementation">The type of the implementation to use.</typeparam>
         /// <param name="services">The <see cref="IServiceCollection"/> to add the service to.</param>
+        /// <param name="serviceKey">The <see cref="ServiceDescriptor.ServiceKey"/> of the service.</param>
         /// <param name="implementationFactory">The factory that creates the service.</param>
         /// <returns>A reference to this instance after the operation has completed.</returns>
         /// <seealso cref="ServiceLifetime.Scoped"/>
-        public static IServiceCollection AddScoped<TService, TImplementation>(
+        public static IServiceCollection AddKeyedScoped<TService, TImplementation>(
             this IServiceCollection services,
+            object serviceKey,
             Func<IServiceProvider, TImplementation> implementationFactory)
             where TService : class
             where TImplementation : class, TService
@@ -292,7 +324,7 @@ namespace Microsoft.Extensions.DependencyInjection
             ThrowHelper.ThrowIfNull(services);
             ThrowHelper.ThrowIfNull(implementationFactory);
 
-            return services.AddScoped(serviceType: typeof(TService), implementationFactory: implementationFactory);
+            return services.AddKeyedScoped(typeof(TService), serviceKey, implementationFactory);
         }
 
 
@@ -303,19 +335,21 @@ namespace Microsoft.Extensions.DependencyInjection
         /// </summary>
         /// <param name="services">The <see cref="IServiceCollection"/> to add the service to.</param>
         /// <param name="serviceType">The type of the service to register.</param>
+        /// <param name="serviceKey">The <see cref="ServiceDescriptor.ServiceKey"/> of the service.</param>
         /// <param name="implementationType">The implementation type of the service.</param>
         /// <returns>A reference to this instance after the operation has completed.</returns>
         /// <seealso cref="ServiceLifetime.Singleton"/>
-        public static IServiceCollection AddSingleton(
+        public static IServiceCollection AddKeyedSingleton(
             this IServiceCollection services,
             Type serviceType,
+            object serviceKey,
             [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] Type implementationType)
         {
             ThrowHelper.ThrowIfNull(services);
             ThrowHelper.ThrowIfNull(serviceType);
             ThrowHelper.ThrowIfNull(implementationType);
 
-            return Add(services, serviceType, implementationType, ServiceLifetime.Singleton);
+            return AddKeyed(services, serviceType, serviceKey, implementationType, ServiceLifetime.Singleton);
         }
 
         /// <summary>
@@ -325,19 +359,21 @@ namespace Microsoft.Extensions.DependencyInjection
         /// </summary>
         /// <param name="services">The <see cref="IServiceCollection"/> to add the service to.</param>
         /// <param name="serviceType">The type of the service to register.</param>
+        /// <param name="serviceKey">The <see cref="ServiceDescriptor.ServiceKey"/> of the service.</param>
         /// <param name="implementationFactory">The factory that creates the service.</param>
         /// <returns>A reference to this instance after the operation has completed.</returns>
         /// <seealso cref="ServiceLifetime.Singleton"/>
-        public static IServiceCollection AddSingleton(
+        public static IServiceCollection AddKeyedSingleton(
             this IServiceCollection services,
             Type serviceType,
+            object serviceKey,
             Func<IServiceProvider, object> implementationFactory)
         {
             ThrowHelper.ThrowIfNull(services);
             ThrowHelper.ThrowIfNull(serviceType);
             ThrowHelper.ThrowIfNull(implementationFactory);
 
-            return Add(services, serviceType, implementationFactory, ServiceLifetime.Singleton);
+            return AddKeyed(services, serviceType, serviceKey, implementationFactory, ServiceLifetime.Singleton);
         }
 
         /// <summary>
@@ -348,15 +384,18 @@ namespace Microsoft.Extensions.DependencyInjection
         /// <typeparam name="TService">The type of the service to add.</typeparam>
         /// <typeparam name="TImplementation">The type of the implementation to use.</typeparam>
         /// <param name="services">The <see cref="IServiceCollection"/> to add the service to.</param>
+        /// <param name="serviceKey">The <see cref="ServiceDescriptor.ServiceKey"/> of the service.</param>
         /// <returns>A reference to this instance after the operation has completed.</returns>
         /// <seealso cref="ServiceLifetime.Singleton"/>
-        public static IServiceCollection AddSingleton<TService, [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] TImplementation>(this IServiceCollection services)
+        public static IServiceCollection AddKeyedSingleton<TService, [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] TImplementation>(
+            this IServiceCollection services,
+            object serviceKey)
             where TService : class
             where TImplementation : class, TService
         {
             ThrowHelper.ThrowIfNull(services);
 
-            return services.AddSingleton(typeof(TService), typeof(TImplementation));
+            return services.AddKeyedSingleton(typeof(TService), serviceKey, typeof(TImplementation));
         }
 
         /// <summary>
@@ -365,16 +404,18 @@ namespace Microsoft.Extensions.DependencyInjection
         /// </summary>
         /// <param name="services">The <see cref="IServiceCollection"/> to add the service to.</param>
         /// <param name="serviceType">The type of the service to register and the implementation to use.</param>
+        /// <param name="serviceKey">The <see cref="ServiceDescriptor.ServiceKey"/> of the service.</param>
         /// <returns>A reference to this instance after the operation has completed.</returns>
         /// <seealso cref="ServiceLifetime.Singleton"/>
-        public static IServiceCollection AddSingleton(
+        public static IServiceCollection AddKeyedSingleton(
             this IServiceCollection services,
-            [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] Type serviceType)
+            [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] Type serviceType,
+            object serviceKey)
         {
             ThrowHelper.ThrowIfNull(services);
             ThrowHelper.ThrowIfNull(serviceType);
 
-            return services.AddSingleton(serviceType, serviceType);
+            return services.AddKeyedSingleton(serviceType, serviceKey, serviceType);
         }
 
         /// <summary>
@@ -383,14 +424,17 @@ namespace Microsoft.Extensions.DependencyInjection
         /// </summary>
         /// <typeparam name="TService">The type of the service to add.</typeparam>
         /// <param name="services">The <see cref="IServiceCollection"/> to add the service to.</param>
+        /// <param name="serviceKey">The <see cref="ServiceDescriptor.ServiceKey"/> of the service.</param>
         /// <returns>A reference to this instance after the operation has completed.</returns>
         /// <seealso cref="ServiceLifetime.Singleton"/>
-        public static IServiceCollection AddSingleton<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] TService>(this IServiceCollection services)
+        public static IServiceCollection AddKeyedSingleton<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] TService>(
+            this IServiceCollection services,
+            object serviceKey)
             where TService : class
         {
             ThrowHelper.ThrowIfNull(services);
 
-            return services.AddSingleton(typeof(TService));
+            return services.AddKeyedSingleton(typeof(TService), serviceKey, typeof(TService));
         }
 
         /// <summary>
@@ -400,18 +444,20 @@ namespace Microsoft.Extensions.DependencyInjection
         /// </summary>
         /// <typeparam name="TService">The type of the service to add.</typeparam>
         /// <param name="services">The <see cref="IServiceCollection"/> to add the service to.</param>
+        /// <param name="serviceKey">The <see cref="ServiceDescriptor.ServiceKey"/> of the service.</param>
         /// <param name="implementationFactory">The factory that creates the service.</param>
         /// <returns>A reference to this instance after the operation has completed.</returns>
         /// <seealso cref="ServiceLifetime.Singleton"/>
-        public static IServiceCollection AddSingleton<TService>(
+        public static IServiceCollection AddKeyedSingleton<TService>(
             this IServiceCollection services,
+            object serviceKey,
             Func<IServiceProvider, TService> implementationFactory)
             where TService : class
         {
             ThrowHelper.ThrowIfNull(services);
             ThrowHelper.ThrowIfNull(implementationFactory);
 
-            return services.AddSingleton(serviceType: typeof(TService), implementationFactory: implementationFactory);
+            return services.AddKeyedSingleton(typeof(TService), serviceKey, implementationFactory);
         }
 
         /// <summary>
@@ -423,11 +469,13 @@ namespace Microsoft.Extensions.DependencyInjection
         /// <typeparam name="TService">The type of the service to add.</typeparam>
         /// <typeparam name="TImplementation">The type of the implementation to use.</typeparam>
         /// <param name="services">The <see cref="IServiceCollection"/> to add the service to.</param>
+        /// <param name="serviceKey">The <see cref="ServiceDescriptor.ServiceKey"/> of the service.</param>
         /// <param name="implementationFactory">The factory that creates the service.</param>
         /// <returns>A reference to this instance after the operation has completed.</returns>
         /// <seealso cref="ServiceLifetime.Singleton"/>
-        public static IServiceCollection AddSingleton<TService, TImplementation>(
+        public static IServiceCollection AddKeyedSingleton<TService, TImplementation>(
             this IServiceCollection services,
+            object serviceKey,
             Func<IServiceProvider, TImplementation> implementationFactory)
             where TService : class
             where TImplementation : class, TService
@@ -435,7 +483,7 @@ namespace Microsoft.Extensions.DependencyInjection
             ThrowHelper.ThrowIfNull(services);
             ThrowHelper.ThrowIfNull(implementationFactory);
 
-            return services.AddSingleton(serviceType: typeof(TService), implementationFactory: implementationFactory);
+            return services.AddKeyedSingleton(typeof(TService), serviceKey, implementationFactory);
         }
 
         /// <summary>
@@ -445,19 +493,21 @@ namespace Microsoft.Extensions.DependencyInjection
         /// </summary>
         /// <param name="services">The <see cref="IServiceCollection"/> to add the service to.</param>
         /// <param name="serviceType">The type of the service to register.</param>
+        /// <param name="serviceKey">The <see cref="ServiceDescriptor.ServiceKey"/> of the service.</param>
         /// <param name="implementationInstance">The instance of the service.</param>
         /// <returns>A reference to this instance after the operation has completed.</returns>
         /// <seealso cref="ServiceLifetime.Singleton"/>
-        public static IServiceCollection AddSingleton(
+        public static IServiceCollection AddKeyedSingleton(
             this IServiceCollection services,
             Type serviceType,
+            object serviceKey,
             object implementationInstance)
         {
             ThrowHelper.ThrowIfNull(services);
             ThrowHelper.ThrowIfNull(serviceType);
             ThrowHelper.ThrowIfNull(implementationInstance);
 
-            var serviceDescriptor = new ServiceDescriptor(serviceType, implementationInstance);
+            var serviceDescriptor = new ServiceDescriptor(serviceType, serviceKey, implementationInstance);
             services.Add(serviceDescriptor);
             return services;
         }
@@ -468,38 +518,42 @@ namespace Microsoft.Extensions.DependencyInjection
         /// specified <see cref="IServiceCollection"/>.
         /// </summary>
         /// <param name="services">The <see cref="IServiceCollection"/> to add the service to.</param>
+        /// <param name="serviceKey">The <see cref="ServiceDescriptor.ServiceKey"/> of the service.</param>
         /// <param name="implementationInstance">The instance of the service.</param>
         /// <returns>A reference to this instance after the operation has completed.</returns>
         /// <seealso cref="ServiceLifetime.Singleton"/>
-        public static IServiceCollection AddSingleton<TService>(
+        public static IServiceCollection AddKeyedSingleton<TService>(
             this IServiceCollection services,
+            object serviceKey,
             TService implementationInstance)
             where TService : class
         {
             ThrowHelper.ThrowIfNull(services);
             ThrowHelper.ThrowIfNull(implementationInstance);
 
-            return services.AddSingleton(serviceType: typeof(TService), implementationInstance: implementationInstance);
+            return services.AddKeyedSingleton(typeof(TService), serviceKey, implementationInstance);
         }
 
-        private static IServiceCollection Add(
+        private static IServiceCollection AddKeyed(
             IServiceCollection collection,
             Type serviceType,
+            object serviceKey,
             [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicConstructors)] Type implementationType,
             ServiceLifetime lifetime)
         {
-            var descriptor = new ServiceDescriptor(serviceType, implementationType, lifetime);
+            var descriptor = new ServiceDescriptor(serviceType, serviceKey, implementationType, lifetime);
             collection.Add(descriptor);
             return collection;
         }
 
-        private static IServiceCollection Add(
+        private static IServiceCollection AddKeyed(
             IServiceCollection collection,
             Type serviceType,
+            object serviceKey,
             Func<IServiceProvider, object> implementationFactory,
             ServiceLifetime lifetime)
         {
-            var descriptor = new ServiceDescriptor(serviceType, implementationFactory, lifetime);
+            var descriptor = new ServiceDescriptor(serviceType, serviceKey, implementationFactory, lifetime);
             collection.Add(descriptor);
             return collection;
         }
