@@ -564,8 +564,14 @@ namespace Microsoft.Extensions.DependencyInjection.ServiceLookup
             _callSiteCache[new ServiceCacheKey(serviceIdentifier, DefaultSlot)] = serviceCallSite;
         }
 
-        public bool IsService(Type serviceType)
+        public bool IsService(Type serviceType) => IsService(new ServiceIdentifier(null, serviceType));
+
+        public bool IsService(object key, Type serviceType) => IsService(new ServiceIdentifier(key, serviceType));
+
+        internal bool IsService(ServiceIdentifier serviceIdentifier)
         {
+            var serviceType = serviceIdentifier.ServiceType;
+
             if (serviceType is null)
             {
                 throw new ArgumentNullException(nameof(serviceType));
@@ -577,7 +583,7 @@ namespace Microsoft.Extensions.DependencyInjection.ServiceLookup
                 return false;
             }
 
-            if (_descriptorLookup.ContainsKey(ServiceIdentifier.FromServiceType(serviceType)))
+            if (_descriptorLookup.ContainsKey(serviceIdentifier))
             {
                 return true;
             }

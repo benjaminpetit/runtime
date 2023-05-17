@@ -14,17 +14,26 @@ namespace Microsoft.Extensions.DependencyInjection.Tests
         [Fact]
         public void ResolveKeyedService()
         {
-            var service = new Service();
+            var service1 = new Service();
+            var service2 = new Service();
             var serviceCollection = new ServiceCollection();
-            serviceCollection.AddKeyedSingleton<IService>("service1", service);
+            serviceCollection.AddKeyedSingleton<IService>("service1", service1);
+            serviceCollection.AddKeyedSingleton<IService>("service2", service2);
 
             var provider = CreateServiceProvider(serviceCollection);
 
-            Assert.Same(service, provider.GetKeyedService<IService>("service1"));
+            Assert.Null(provider.GetService<IService>());
+            Assert.Same(service1, provider.GetKeyedService<IService>("service1"));
+            Assert.Same(service2, provider.GetKeyedService<IService>("service2"));
         }
 
         interface IService { }
 
-        class Service : IService { }
+        class Service : IService
+        {
+            private readonly Guid _id = Guid.NewGuid();
+
+            public override string? ToString() => _id.ToString();
+        }
     }
 }
