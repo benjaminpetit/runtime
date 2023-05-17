@@ -14,7 +14,7 @@ namespace Microsoft.Extensions.DependencyInjection
     /// <summary>
     /// The default IServiceProvider.
     /// </summary>
-    public sealed class ServiceProvider : IServiceProvider, IDisposable, IAsyncDisposable
+    public sealed class ServiceProvider : IServiceProvider, ISupportKeyedService, IDisposable, IAsyncDisposable
     {
         private readonly CallSiteValidator? _callSiteValidator;
 
@@ -92,6 +92,11 @@ namespace Microsoft.Extensions.DependencyInjection
         /// <param name="serviceType">The type of the service to get.</param>
         /// <returns>The service that was produced.</returns>
         public object? GetService(Type serviceType) => GetService(serviceType, Root);
+
+        public object GetKeyedService(Type serviceType, object serviceKey)
+        {
+            throw new NotImplementedException();
+        }
 
         internal bool IsDisposed() => _disposed;
 

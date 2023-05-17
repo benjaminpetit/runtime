@@ -13,6 +13,6 @@ namespace Microsoft.Extensions.DependencyInjection
         /// <param name="serviceType">An object that specifies the type of service object to get.</param>
         /// <param name="serviceKey">An object that specifies the key of service object to get.</param>
         /// <returns> A service object of type serviceType. -or- null if there is no service object of type serviceType.</returns>
-        object GetKeyedService(Type serviceType, object serviceKey);
+        object? GetKeyedService(Type serviceType, object serviceKey);
     }
 }

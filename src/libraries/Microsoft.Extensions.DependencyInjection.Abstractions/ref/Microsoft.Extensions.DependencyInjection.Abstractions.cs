@@ -51,7 +51,7 @@ namespace Microsoft.Extensions.DependencyInjection
     }
     public partial interface ISupportKeyedService
     {
-        object GetKeyedService(System.Type serviceType, object serviceKey);
+        object? GetKeyedService(System.Type serviceType, object serviceKey);
     }
     public partial interface ISupportRequiredKeyedService
     {
