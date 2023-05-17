@@ -16,6 +16,15 @@ using Xunit;
 
 namespace Microsoft.Extensions.DependencyInjection.ServiceLookup
 {
+    public static class TempExtensions
+    {
+        // TODO BPETIT REMOVE ME
+        internal static ServiceCallSite GetCallSite(this CallSiteFactory callSiteFactory, Type type, CallSiteChain callSiteChain)
+        {
+            return callSiteFactory.GetCallSite(ServiceIdentifier.FromServiceType(type), callSiteChain);
+        }
+    }
+
     public class CallSiteFactoryTest
     {
         [Fact]
@@ -791,7 +800,7 @@ namespace Microsoft.Extensions.DependencyInjection.ServiceLookup
             if (expectedLocation != CallSiteResultCacheLocation.None)
             {
                 Assert.Equal(0, callSite.Cache.Key.Slot);
-                Assert.Equal(typeof(IEnumerable<FakeService>), callSite.Cache.Key.Type);
+                Assert.Equal(typeof(IEnumerable<FakeService>), callSite.Cache.Key.ServiceIdentifier?.ServiceType);
             }
             else
             {

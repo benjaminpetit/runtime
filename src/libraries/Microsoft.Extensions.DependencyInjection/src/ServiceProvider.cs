@@ -52,9 +52,9 @@ namespace Microsoft.Extensions.DependencyInjection
             CallSiteFactory = new CallSiteFactory(serviceDescriptors);
             // The list of built in services that aren't part of the list of service descriptors
             // keep this in sync with CallSiteFactory.IsService
-            CallSiteFactory.Add(typeof(IServiceProvider), new ServiceProviderCallSite());
-            CallSiteFactory.Add(typeof(IServiceScopeFactory), new ConstantCallSite(typeof(IServiceScopeFactory), Root));
-            CallSiteFactory.Add(typeof(IServiceProviderIsService), new ConstantCallSite(typeof(IServiceProviderIsService), CallSiteFactory));
+            CallSiteFactory.Add(ServiceIdentifier.FromServiceType(typeof(IServiceProvider)), new ServiceProviderCallSite());
+            CallSiteFactory.Add(ServiceIdentifier.FromServiceType(typeof(IServiceScopeFactory)), new ConstantCallSite(typeof(IServiceScopeFactory), Root));
+            CallSiteFactory.Add(ServiceIdentifier.FromServiceType(typeof(IServiceProviderIsService)), new ConstantCallSite(typeof(IServiceProviderIsService), CallSiteFactory));
 
             if (options.ValidateScopes)
             {
@@ -163,7 +163,7 @@ namespace Microsoft.Extensions.DependencyInjection
 
         private Func<ServiceProviderEngineScope, object?> CreateServiceAccessor(Type serviceType)
         {
-            ServiceCallSite? callSite = CallSiteFactory.GetCallSite(serviceType, new CallSiteChain());
+            ServiceCallSite? callSite = CallSiteFactory.GetCallSite(ServiceIdentifier.FromServiceType(serviceType), new CallSiteChain());
             if (callSite != null)
             {
                 DependencyInjectionEventSource.Log.CallSiteBuilt(this, serviceType, callSite);
