@@ -451,7 +451,7 @@ namespace Microsoft.Extensions.DependencyInjection
         public static IServiceCollection AddKeyedSingleton<TService>(
             this IServiceCollection services,
             object serviceKey,
-            Func<IServiceProvider, TService> implementationFactory)
+            Func<IServiceProvider, object, TService> implementationFactory)
             where TService : class
         {
             ThrowHelper.ThrowIfNull(services);

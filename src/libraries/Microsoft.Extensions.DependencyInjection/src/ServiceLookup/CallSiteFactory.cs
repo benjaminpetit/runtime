@@ -67,7 +67,7 @@ namespace Microsoft.Extensions.DependencyInjection.ServiceLookup
                         ValidateTrimmingAnnotations(serviceType, serviceTypeGenericArguments, implementationType, implementationTypeGenericArguments);
                     }
                 }
-                else if (descriptor.ImplementationInstance == null && descriptor.ImplementationFactory == null)
+                else if (descriptor.ImplementationInstance == null && descriptor.ImplementationFactory == null && descriptor.KeyedImplementationFactory == null)
                 {
                     Debug.Assert(descriptor.ImplementationType != null);
                     Type implementationType = descriptor.ImplementationType;
@@ -337,6 +337,11 @@ namespace Microsoft.Extensions.DependencyInjection.ServiceLookup
                 else if (descriptor.ImplementationFactory != null)
                 {
                     callSite = new FactoryCallSite(lifetime, descriptor.ServiceType, descriptor.ImplementationFactory);
+                }
+                else if (descriptor.KeyedImplementationFactory != null)
+                {
+                    // TODO BPETIT FIXEME
+                    callSite = new FactoryCallSite(lifetime, descriptor.ServiceType, descriptor.ServiceKey!, descriptor.KeyedImplementationFactory);
                 }
                 else if (descriptor.ImplementationType != null)
                 {

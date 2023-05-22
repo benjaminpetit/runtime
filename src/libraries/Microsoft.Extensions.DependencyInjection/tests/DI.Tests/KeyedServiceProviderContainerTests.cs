@@ -45,7 +45,7 @@ namespace Microsoft.Extensions.DependencyInjection.Tests
         {
             var service = new Service();
             var serviceCollection = new ServiceCollection();
-            serviceCollection.AddKeyedSingleton<IService>("service1", sp => service);
+            serviceCollection.AddKeyedSingleton<IService>("service1", (sp, key) => service);
 
             var provider = CreateServiceProvider(serviceCollection);
 
