@@ -189,6 +189,11 @@ namespace Microsoft.Extensions.DependencyInjection
         public static Microsoft.Extensions.DependencyInjection.ServiceDescriptor Transient<TService, TImplementation>() where TService : class where TImplementation : class, TService { throw null; }
         public static Microsoft.Extensions.DependencyInjection.ServiceDescriptor Transient<TService, TImplementation>(System.Func<System.IServiceProvider, TImplementation> implementationFactory) where TService : class where TImplementation : class, TService { throw null; }
     }
+    [System.AttributeUsageAttribute(System.AttributeTargets.Parameter)]
+    public partial class ServiceKeyAttribute : System.Attribute
+    {
+        public ServiceKeyAttribute() { }
+    }
     public enum ServiceLifetime
     {
         Singleton = 0,

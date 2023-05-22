@@ -432,6 +432,7 @@ namespace Microsoft.Extensions.DependencyInjection.ServiceLookup
                     }
 
                     parameterCallSites = CreateArgumentCallSites(
+                        serviceIdentifier,
                         implementationType,
                         callSiteChain,
                         parameters,
@@ -450,6 +451,7 @@ namespace Microsoft.Extensions.DependencyInjection.ServiceLookup
                     ParameterInfo[] parameters = constructors[i].GetParameters();
 
                     ServiceCallSite[]? currentParameterCallSites = CreateArgumentCallSites(
+                        serviceIdentifier,
                         implementationType,
                         callSiteChain,
                         parameters,
@@ -511,16 +513,30 @@ namespace Microsoft.Extensions.DependencyInjection.ServiceLookup
 
         /// <returns>Not <b>null</b> if <b>throwIfCallSiteNotFound</b> is true</returns>
         private ServiceCallSite[]? CreateArgumentCallSites(
+            ServiceIdentifier serviceIdentifier,
             Type implementationType,
             CallSiteChain callSiteChain,
             ParameterInfo[] parameters,
             bool throwIfCallSiteNotFound)
         {
             var parameterCallSites = new ServiceCallSite[parameters.Length];
+
             for (int index = 0; index < parameters.Length; index++)
             {
+                ServiceCallSite? callSite = null;
                 Type parameterType = parameters[index].ParameterType;
-                ServiceCallSite? callSite = GetCallSite(ServiceIdentifier.FromServiceType(parameterType), callSiteChain);
+                if (parameters[index].CustomAttributes != null)
+                {
+                    foreach (var attribute in parameters[index].CustomAttributes)
+                    {
+                        if (attribute.AttributeType == typeof(ServiceKeyAttribute))
+                        {
+                            callSite = new ConstantCallSite(parameterType, serviceIdentifier.ServiceKey);
+                        }
+                    }
+                }
+
+                callSite ??= GetCallSite(ServiceIdentifier.FromServiceType(parameterType), callSiteChain);
 
                 if (callSite == null && ParameterDefaultValue.TryGetDefaultValue(parameters[index], out object? defaultValue))
                 {

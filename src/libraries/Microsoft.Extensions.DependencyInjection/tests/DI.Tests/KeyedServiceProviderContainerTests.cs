@@ -41,6 +41,21 @@ namespace Microsoft.Extensions.DependencyInjection.Tests
         }
 
         [Fact]
+        public void ResolveKeyedServiceSingletonInstanceWithKeyInjection()
+        {
+            var serviceKey = "this-is-my-service";
+            var serviceCollection = new ServiceCollection();
+            serviceCollection.AddKeyedSingleton<IService, Service>(serviceKey);
+
+            var provider = CreateServiceProvider(serviceCollection);
+
+            Assert.Null(provider.GetService<IService>());
+            var svc = provider.GetKeyedService<IService>(serviceKey);
+            Assert.NotNull(svc);
+            Assert.Equal(serviceKey, svc.ToString());
+        }
+
+        [Fact]
         public void ResolveKeyedServiceSingletonFactory()
         {
             var service = new Service();
@@ -103,7 +118,7 @@ namespace Microsoft.Extensions.DependencyInjection.Tests
 
             public Service() => _id = Guid.NewGuid().ToString();
 
-            public Service(string id) => _id = id;
+            public Service([ServiceKey] string id) => _id = id;
 
             public override string? ToString() => _id;
         }
