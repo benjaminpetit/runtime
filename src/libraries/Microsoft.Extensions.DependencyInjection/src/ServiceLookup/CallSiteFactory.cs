@@ -527,11 +527,18 @@ namespace Microsoft.Extensions.DependencyInjection.ServiceLookup
                 Type parameterType = parameters[index].ParameterType;
                 if (parameters[index].CustomAttributes != null)
                 {
-                    foreach (var attribute in parameters[index].CustomAttributes)
+                    foreach (var attribute in parameters[index].GetCustomAttributes(true))
                     {
-                        if (attribute.AttributeType == typeof(ServiceKeyAttribute))
+                        if (attribute is ServiceKeyAttribute)
                         {
                             callSite = new ConstantCallSite(parameterType, serviceIdentifier.ServiceKey);
+                            break;
+                        }
+                        if (attribute is FromKeyedServicesAttribute keyed)
+                        {
+                            var parameterSvcId = new ServiceIdentifier(keyed.Key, parameterType);
+                            callSite = GetCallSite(parameterSvcId, callSiteChain);
+                            break;
                         }
                     }
                 }

@@ -29,6 +29,12 @@ namespace Microsoft.Extensions.DependencyInjection
         public void Dispose() { }
         public System.Threading.Tasks.ValueTask DisposeAsync() { throw null; }
     }
+    [System.AttributeUsageAttribute(System.AttributeTargets.Parameter)]
+    public partial class FromKeyedServicesAttribute : System.Attribute
+    {
+        public FromKeyedServicesAttribute(string key) { }
+        public string Key { get { throw null; } }
+    }
     public partial interface IServiceCollection : System.Collections.Generic.ICollection<Microsoft.Extensions.DependencyInjection.ServiceDescriptor>, System.Collections.Generic.IEnumerable<Microsoft.Extensions.DependencyInjection.ServiceDescriptor>, System.Collections.Generic.IList<Microsoft.Extensions.DependencyInjection.ServiceDescriptor>, System.Collections.IEnumerable
     {
     }

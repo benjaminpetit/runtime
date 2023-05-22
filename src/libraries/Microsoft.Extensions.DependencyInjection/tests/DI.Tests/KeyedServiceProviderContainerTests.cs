@@ -56,6 +56,23 @@ namespace Microsoft.Extensions.DependencyInjection.Tests
         }
 
         [Fact]
+        public void ResolveKeyedServiceSingletonInstanceWithKeyedParameter()
+        {
+            var serviceCollection = new ServiceCollection();
+            serviceCollection.AddKeyedSingleton<IService, Service>("service1");
+            serviceCollection.AddKeyedSingleton<IService, Service>("service2");
+            serviceCollection.AddSingleton<OtherService>();
+
+            var provider = CreateServiceProvider(serviceCollection);
+
+            Assert.Null(provider.GetService<IService>());
+            var svc = provider.GetService<OtherService>();
+            Assert.NotNull(svc);
+            Assert.Equal("service1", svc.Service1.ToString());
+            Assert.Equal("service2", svc.Service2.ToString());
+        }
+
+        [Fact]
         public void ResolveKeyedServiceSingletonFactory()
         {
             var service = new Service();
@@ -121,6 +138,21 @@ namespace Microsoft.Extensions.DependencyInjection.Tests
             public Service([ServiceKey] string id) => _id = id;
 
             public override string? ToString() => _id;
+        }
+
+        class OtherService
+        {
+            public OtherService(
+                [FromKeyedServices("service1")] IService service1,
+                [FromKeyedServices("service2")] IService service2)
+            {
+                Service1 = service1;
+                Service2 = service2;
+            }
+
+            public IService Service1 { get; }
+
+            public IService Service2 { get; }
         }
     }
 }
