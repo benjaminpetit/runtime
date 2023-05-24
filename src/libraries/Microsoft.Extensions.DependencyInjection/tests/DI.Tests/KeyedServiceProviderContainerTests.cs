@@ -2,14 +2,13 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 
 using System;
-using Microsoft.Extensions.DependencyInjection.Specification;
 using Xunit;
 
 namespace Microsoft.Extensions.DependencyInjection.Tests
 {
-    public class KeyedServiceProviderContainerTests : DependencyInjectionSpecificationTests
+    public abstract class KeyedServiceProviderContainerTests
     {
-        protected override IServiceProvider CreateServiceProvider(IServiceCollection collection) => collection.BuildServiceProvider();
+        protected abstract  IServiceProvider CreateServiceProvider(IServiceCollection collection);
 
         [Fact]
         public void ResolveKeyedService()
@@ -154,5 +153,25 @@ namespace Microsoft.Extensions.DependencyInjection.Tests
 
             public IService Service2 { get; }
         }
+    }
+
+    public class KeyedServiceProviderDefaultContainerTests : KeyedServiceProviderContainerTests
+    {
+        protected override IServiceProvider CreateServiceProvider(IServiceCollection collection) => collection.BuildServiceProvider(ServiceProviderMode.Default);
+    }
+
+    public class KeyedServiceProviderDynamicContainerTests : KeyedServiceProviderContainerTests
+    {
+        protected override IServiceProvider CreateServiceProvider(IServiceCollection collection) => collection.BuildServiceProvider();
+    }
+
+    public class KeyedServiceProviderExpressionContainerTests : KeyedServiceProviderContainerTests
+    {
+        protected override IServiceProvider CreateServiceProvider(IServiceCollection collection) => collection.BuildServiceProvider(ServiceProviderMode.Expressions);
+    }
+
+    public class KeyedServiceProviderILEmitContainerTests : KeyedServiceProviderContainerTests
+    {
+        protected override IServiceProvider CreateServiceProvider(IServiceCollection collection) => collection.BuildServiceProvider(ServiceProviderMode.ILEmit);
     }
 }
