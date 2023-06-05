@@ -15,4 +15,9 @@ namespace Microsoft.Extensions.DependencyInjection
         /// <returns> A service object of type serviceType. -or- null if there is no service object of type serviceType.</returns>
         object? GetKeyedService(Type serviceType, object serviceKey);
     }
+
+    public static class KeyedService
+    {
+        public static object AnyKey { get; } = new object();
+    }
 }

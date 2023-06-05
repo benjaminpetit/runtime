@@ -67,6 +67,10 @@ namespace Microsoft.Extensions.DependencyInjection
     {
         object GetRequiredService(System.Type serviceType);
     }
+    public static partial class KeyedService
+    {
+        public static object AnyKey { get { throw null; } }
+    }
     public delegate object ObjectFactory(System.IServiceProvider serviceProvider, object?[]? arguments);
     public delegate T ObjectFactory<T>(System.IServiceProvider serviceProvider, object?[]? arguments);
     public partial class ServiceCollection : Microsoft.Extensions.DependencyInjection.IServiceCollection, System.Collections.Generic.ICollection<Microsoft.Extensions.DependencyInjection.ServiceDescriptor>, System.Collections.Generic.IEnumerable<Microsoft.Extensions.DependencyInjection.ServiceDescriptor>, System.Collections.Generic.IList<Microsoft.Extensions.DependencyInjection.ServiceDescriptor>, System.Collections.IEnumerable

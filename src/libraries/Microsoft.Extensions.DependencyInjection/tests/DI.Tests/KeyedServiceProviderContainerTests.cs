@@ -55,6 +55,27 @@ namespace Microsoft.Extensions.DependencyInjection.Tests
         }
 
         [Fact]
+        public void ResolveKeyedServiceSingletonInstanceWithAnyKey()
+        {
+            var serviceCollection = new ServiceCollection();
+            serviceCollection.AddKeyedSingleton<IService, Service>(KeyedService.AnyKey);
+
+            var provider = CreateServiceProvider(serviceCollection);
+
+            Assert.Null(provider.GetService<IService>());
+
+            var serviceKey1 = "some-key";
+            var svc1 = provider.GetKeyedService<IService>(serviceKey1);
+            Assert.NotNull(svc1);
+            Assert.Equal(serviceKey1, svc1.ToString());
+
+            var serviceKey2 = "some-other-key";
+            var svc2 = provider.GetKeyedService<IService>(serviceKey2);
+            Assert.NotNull(svc2);
+            Assert.Equal(serviceKey2, svc2.ToString());
+        }
+
+        [Fact]
         public void ResolveKeyedServiceSingletonInstanceWithKeyedParameter()
         {
             var serviceCollection = new ServiceCollection();
@@ -82,6 +103,26 @@ namespace Microsoft.Extensions.DependencyInjection.Tests
 
             Assert.Null(provider.GetService<IService>());
             Assert.Same(service, provider.GetKeyedService<IService>("service1"));
+        }
+
+        [Fact]
+        public void ResolveKeyedServiceSingletonFactoryWithAnyKey()
+        {
+            var serviceCollection = new ServiceCollection();
+            serviceCollection.AddKeyedSingleton<IService>(KeyedService.AnyKey, (sp, key) => new Service((string)key));
+
+            var provider = CreateServiceProvider(serviceCollection);
+
+            Assert.Null(provider.GetService<IService>());
+
+            for (int i=0; i<3; i++)
+            {
+                var key = "service" + i;
+                var s1 = provider.GetKeyedService<IService>(key);
+                var s2 = provider.GetKeyedService<IService>(key);
+                Assert.Same(s1, s2);
+                Assert.Equal(key, s1.ToString());
+            }
         }
 
         [Fact]
@@ -117,6 +158,20 @@ namespace Microsoft.Extensions.DependencyInjection.Tests
         {
             var serviceCollection = new ServiceCollection();
             serviceCollection.AddKeyedTransient<IService, Service>("service1");
+
+            var provider = CreateServiceProvider(serviceCollection);
+
+            Assert.Null(provider.GetService<IService>());
+            var first = provider.GetKeyedService<IService>("service1");
+            var second = provider.GetKeyedService<IService>("service1");
+            Assert.NotSame(first, second);
+        }
+
+        [Fact]
+        public void ResolveKeyedServiceTransientTypeWithAnyKey()
+        {
+            var serviceCollection = new ServiceCollection();
+            serviceCollection.AddKeyedTransient<IService, Service>(KeyedService.AnyKey);
 
             var provider = CreateServiceProvider(serviceCollection);
 

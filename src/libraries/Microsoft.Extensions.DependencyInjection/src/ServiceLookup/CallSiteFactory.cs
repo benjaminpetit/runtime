@@ -214,6 +214,16 @@ namespace Microsoft.Extensions.DependencyInjection.ServiceLookup
                 return TryCreateExact(descriptor.Last, serviceIdentifier, callSiteChain, DefaultSlot);
             }
 
+            if (serviceIdentifier.ServiceKey != null)
+            {
+                // Check if there is a registration with KeyedService.AnyKey
+                var catchAllIdentifier = new ServiceIdentifier(KeyedService.AnyKey, serviceIdentifier.ServiceType);
+                if (_descriptorLookup.TryGetValue(catchAllIdentifier, out descriptor))
+                {
+                    return TryCreateExact(descriptor.Last, serviceIdentifier, callSiteChain, DefaultSlot);
+                }
+            }
+
             return null;
         }
 
@@ -223,6 +233,16 @@ namespace Microsoft.Extensions.DependencyInjection.ServiceLookup
                 && _descriptorLookup.TryGetValue(serviceIdentifier.GetGenericTypeDefinition(), out ServiceDescriptorCacheItem descriptor))
             {
                 return TryCreateOpenGeneric(descriptor.Last, serviceIdentifier, callSiteChain, DefaultSlot, true);
+            }
+
+            if (serviceIdentifier.ServiceKey != null)
+            {
+                // Check if there is a registration with KeyedService.AnyKey
+                var catchAllIdentifier = new ServiceIdentifier(KeyedService.AnyKey, serviceIdentifier.ServiceType);
+                if (_descriptorLookup.TryGetValue(catchAllIdentifier, out descriptor))
+                {
+                    return TryCreateExact(descriptor.Last, serviceIdentifier, callSiteChain, DefaultSlot);
+                }
             }
 
             return null;
@@ -341,7 +361,7 @@ namespace Microsoft.Extensions.DependencyInjection.ServiceLookup
                 else if (descriptor.KeyedImplementationFactory != null)
                 {
                     // TODO BPETIT FIXEME
-                    callSite = new FactoryCallSite(lifetime, descriptor.ServiceType, descriptor.ServiceKey!, descriptor.KeyedImplementationFactory);
+                    callSite = new FactoryCallSite(lifetime, descriptor.ServiceType, serviceIdentifier.ServiceKey!, descriptor.KeyedImplementationFactory);
                 }
                 else if (descriptor.ImplementationType != null)
                 {
@@ -612,6 +632,11 @@ namespace Microsoft.Extensions.DependencyInjection.ServiceLookup
             }
 
             if (_descriptorLookup.ContainsKey(serviceIdentifier))
+            {
+                return true;
+            }
+
+            if (serviceIdentifier.ServiceKey != null && _descriptorLookup.ContainsKey(new ServiceIdentifier(KeyedService.AnyKey, serviceType)))
             {
                 return true;
             }
