@@ -229,19 +229,22 @@ namespace Microsoft.Extensions.DependencyInjection.ServiceLookup
 
         private ServiceCallSite? TryCreateOpenGeneric(ServiceIdentifier serviceIdentifier, CallSiteChain callSiteChain)
         {
-            if (serviceIdentifier.IsConstructedGenericType
-                && _descriptorLookup.TryGetValue(serviceIdentifier.GetGenericTypeDefinition(), out ServiceDescriptorCacheItem descriptor))
+            if (serviceIdentifier.IsConstructedGenericType)
             {
-                return TryCreateOpenGeneric(descriptor.Last, serviceIdentifier, callSiteChain, DefaultSlot, true);
-            }
-
-            if (serviceIdentifier.ServiceKey != null)
-            {
-                // Check if there is a registration with KeyedService.AnyKey
-                var catchAllIdentifier = new ServiceIdentifier(KeyedService.AnyKey, serviceIdentifier.ServiceType);
-                if (_descriptorLookup.TryGetValue(catchAllIdentifier, out descriptor))
+                var genericIdentifier = serviceIdentifier.GetGenericTypeDefinition();
+                if (_descriptorLookup.TryGetValue(genericIdentifier, out ServiceDescriptorCacheItem descriptor))
                 {
-                    return TryCreateExact(descriptor.Last, serviceIdentifier, callSiteChain, DefaultSlot);
+                    return TryCreateOpenGeneric(descriptor.Last, serviceIdentifier, callSiteChain, DefaultSlot, true);
+                }
+
+                if (serviceIdentifier.ServiceKey != null)
+                {
+                    // Check if there is a registration with KeyedService.AnyKey
+                    var catchAllIdentifier = new ServiceIdentifier(KeyedService.AnyKey, genericIdentifier.ServiceType);
+                    if (_descriptorLookup.TryGetValue(catchAllIdentifier, out descriptor))
+                    {
+                        return TryCreateOpenGeneric(descriptor.Last, serviceIdentifier, callSiteChain, DefaultSlot, true);
+                    }
                 }
             }
 

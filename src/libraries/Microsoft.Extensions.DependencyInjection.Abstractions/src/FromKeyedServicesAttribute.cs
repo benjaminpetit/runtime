@@ -8,8 +8,8 @@ namespace Microsoft.Extensions.DependencyInjection
     [AttributeUsage(AttributeTargets.Parameter)]
     public class FromKeyedServicesAttribute : Attribute
     {
-        public FromKeyedServicesAttribute(string key) => Key = key;
+        public FromKeyedServicesAttribute(object key) => Key = key;
 
-        public string Key { get; }
+        public object Key { get; }
     }
 }
