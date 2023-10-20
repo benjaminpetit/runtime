@@ -257,6 +257,24 @@ namespace Microsoft.Extensions.DependencyInjection.Tests
                          aggregateException.InnerExceptions[1].Message);
         }
 
+        [Fact]
+        public void BuildServiceProvider_ValidateOnBuild_ValidateAnyKeyRegistrations()
+        {
+            // Arrange
+            var serviceCollection = new ServiceCollection();
+            serviceCollection.AddKeyedTransient<IFoo, AnotherFoo>(KeyedService.AnyKey);
+
+            // Act + Assert
+            var aggregateException = Assert.Throws<AggregateException>(() => serviceCollection.BuildServiceProvider(new ServiceProviderOptions() { ValidateOnBuild = true }));
+            Assert.StartsWith("Some services are not able to be constructed", aggregateException.Message);
+            Assert.Equal(1, aggregateException.InnerExceptions.Count);
+            Assert.Equal("Error while validating the service descriptor 'ServiceType: Microsoft.Extensions.DependencyInjection.Tests.ServiceProviderValidationTests+IFoo Lifetime: Transient ServiceKey: * KeyedImplementationType: Microsoft.Extensions.DependencyInjection.Tests.ServiceProviderValidationTests+AnotherFoo': " +
+                         "Unable to resolve service for type 'Microsoft.Extensions.DependencyInjection.Tests.ServiceProviderValidationTests+IBar' while attempting to activate" +
+                         " 'Microsoft.Extensions.DependencyInjection.Tests.ServiceProviderValidationTests+AnotherFoo'.",
+                aggregateException.InnerExceptions[0].Message);
+
+        }
+
         private interface IFoo
         {
         }
@@ -264,6 +282,13 @@ namespace Microsoft.Extensions.DependencyInjection.Tests
         private class Foo : IFoo
         {
             public Foo(IBar bar)
+            {
+            }
+        }
+
+        private class AnotherFoo : IFoo
+        {
+            public AnotherFoo([ServiceKey] int key, IBar bar)
             {
             }
         }

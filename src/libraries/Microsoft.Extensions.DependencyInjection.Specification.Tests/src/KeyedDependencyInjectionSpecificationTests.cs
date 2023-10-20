@@ -269,6 +269,18 @@ namespace Microsoft.Extensions.DependencyInjection.Specification
         }
 
         [Fact]
+        public void ResolveKeyedServiceSingletonFactoryWithAnyKeyAssignableType()
+        {
+            var serviceCollection = new ServiceCollection();
+            serviceCollection.AddKeyedTransient<IService, ServiceWithObjectKey>(KeyedService.AnyKey);
+
+            var provider = CreateServiceProvider(serviceCollection);
+
+            Assert.Null(provider.GetService<IService>());
+            Assert.NotNull(provider.GetKeyedService<IService>("hello"));
+        }
+
+        [Fact]
         public void ResolveKeyedServiceSingletonType()
         {
             var serviceCollection = new ServiceCollection();
@@ -465,6 +477,13 @@ namespace Microsoft.Extensions.DependencyInjection.Specification
             private readonly int _id;
 
             public ServiceWithIntKey([ServiceKey] int id) => _id = id;
+        }
+
+        internal class ServiceWithObjectKey : IService
+        {
+            private readonly object _id;
+
+            public ServiceWithObjectKey([ServiceKey] object id) => _id = id;
         }
 
         internal class ServiceProviderAccessor
