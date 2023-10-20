@@ -576,12 +576,13 @@ namespace Microsoft.Extensions.DependencyInjection.ServiceLookup
                 {
                     if (serviceIdentifier.ServiceKey != null && attribute is ServiceKeyAttribute)
                     {
+                        var key = serviceIdentifier.ServiceKey;
                         // Check if the parameter type matches
-                        if (parameterType != serviceIdentifier.ServiceKey.GetType())
+                        if (!parameterType.IsInstanceOfType(key))
                         {
                             throw new InvalidOperationException(SR.InvalidServiceKeyType);
                         }
-                        callSite = new ConstantCallSite(parameterType, serviceIdentifier.ServiceKey);
+                        callSite = new ConstantCallSite(parameterType, key);
                         break;
                     }
                     if (attribute is FromKeyedServicesAttribute keyed)
