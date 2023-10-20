@@ -571,8 +571,9 @@ namespace Microsoft.Extensions.DependencyInjection.ServiceLookup
             for (int index = 0; index < parameters.Length; index++)
             {
                 ServiceCallSite? callSite = null;
-                Type parameterType = parameters[index].ParameterType;
-                foreach (var attribute in parameters[index].GetCustomAttributes(true))
+                ParameterInfo parameterInfo = parameters[index];
+                Type parameterType = parameterInfo.ParameterType;
+                foreach (var attribute in parameterInfo.GetCustomAttributes(true))
                 {
                     if (serviceIdentifier.ServiceKey != null && attribute is ServiceKeyAttribute)
                     {
@@ -580,7 +581,11 @@ namespace Microsoft.Extensions.DependencyInjection.ServiceLookup
                         // Check if the parameter type matches
                         if (!parameterType.IsInstanceOfType(key))
                         {
-                            throw new InvalidOperationException(SR.InvalidServiceKeyType);
+                            // Special case: if KeyedService.AnyKey is used, fallback to null:
+                            // It should only happen when validating the provider
+                            key = serviceIdentifier.ServiceKey == KeyedService.AnyKey
+                                ? null
+                                : throw new InvalidOperationException(SR.InvalidServiceKeyType);
                         }
                         callSite = new ConstantCallSite(parameterType, key);
                         break;
@@ -595,7 +600,7 @@ namespace Microsoft.Extensions.DependencyInjection.ServiceLookup
 
                 callSite ??= GetCallSite(ServiceIdentifier.FromServiceType(parameterType), callSiteChain);
 
-                if (callSite == null && ParameterDefaultValue.TryGetDefaultValue(parameters[index], out object? defaultValue))
+                if (callSite == null && ParameterDefaultValue.TryGetDefaultValue(parameterInfo, out object? defaultValue))
                 {
                     callSite = new ConstantCallSite(parameterType, defaultValue);
                 }
